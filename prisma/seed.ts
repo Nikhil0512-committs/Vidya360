@@ -171,6 +171,44 @@ async function main() {
     );
   }
 
+  // 11. Seed Academic Records
+  console.log('Seeding Academic Records...');
+  for (const acad of mockDb.academicRecords || []) {
+    const studentExists = mockDb.students.some(s => s.id === acad.studentId);
+    if (!studentExists) continue;
+
+    await prisma.academicRecord.create({
+      data: {
+        id: acad.id,
+        studentId: acad.studentId,
+        termId: acad.termId,
+        subject: acad.subject,
+        marks: Number(acad.marks),
+        maxMarks: Number(acad.maxMarks),
+        attendancePercent: Number(acad.attendancePercent),
+      },
+    });
+  }
+
+  // 12. Seed Achievements
+  console.log('Seeding Achievements...');
+  for (const ach of mockDb.achievements || []) {
+    const studentExists = mockDb.students.some(s => s.id === ach.studentId);
+    if (!studentExists) continue;
+
+    await prisma.achievement.create({
+      data: {
+        id: ach.id,
+        studentId: ach.studentId,
+        title: ach.title,
+        category: ach.category,
+        level: ach.level,
+        date: new Date(ach.date),
+        certificateUrl: ach.certificateUrl || null,
+      },
+    });
+  }
+
   console.log('🎉 Supabase comprehensive seeding completed successfully!');
 }
 
