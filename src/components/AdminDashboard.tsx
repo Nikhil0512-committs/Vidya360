@@ -111,20 +111,19 @@ export default function AdminDashboard({ user, onLogout, isDarkMode, toggleDarkM
   const refreshSchoolData = async () => {
     setDataLoading(true);
     try {
-      const studentList = await handleGetStudentsBySchool(activeSchoolId);
+      const [studentList, forecastData, requests, funds, disbs] = await Promise.all([
+        handleGetStudentsBySchool(activeSchoolId),
+        handleGetSchoolCashFlowForecast(activeSchoolId, forecastTerm),
+        handleGetTransferRequestsBySchool(activeSchoolId),
+        handleGetEscrowFunds(activeSchoolId),
+        handleGetEscrowDisbursements(activeSchoolId)
+      ]);
+
       setStudents(studentList);
-      
-      const forecastData = await handleGetSchoolCashFlowForecast(activeSchoolId, forecastTerm);
       setForecast(forecastData);
-
-      const requests = await handleGetTransferRequestsBySchool(activeSchoolId);
       setTransferRequests(requests);
-
-      const funds = await handleGetEscrowFunds(activeSchoolId);
       setEscrowFunds(funds);
       if (funds.length > 0) setSelectedFundId(funds[0].id);
-
-      const disbs = await handleGetEscrowDisbursements(activeSchoolId);
       setEscrowDisbursements(disbs);
     } catch (err) {
       console.error(err);

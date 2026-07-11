@@ -317,6 +317,7 @@ export async function getStudentsBySchool(schoolId: string) {
     }),
     prisma.riskScore.findMany({
       where: { familyId: { in: familyIds } },
+      orderBy: { computedAt: 'desc' },
     })
   ]);
 
