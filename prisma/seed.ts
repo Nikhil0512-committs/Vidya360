@@ -157,19 +157,7 @@ async function main() {
     });
   }
 
-  // 10. Seed Escrow Funds
-  console.log('Seeding Escrow Funds...');
-  for (const f of dbState.escrowFunds || []) {
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO "EscrowFund" ("id", "schoolId", "source", "totalAmount", "remainingAmount", "createdAt") VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`,
-      f.id,
-      f.schoolId,
-      f.source,
-      Number(f.totalAmount),
-      Number(f.remainingAmount),
-      new Date(f.createdAt)
-    );
-  }
+
 
   // 11. Seed Academic Records
   console.log('Seeding Academic Records...');

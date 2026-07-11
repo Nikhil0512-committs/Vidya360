@@ -295,13 +295,14 @@ export async function getStudentsBySchool(schoolId: string) {
 
   const familyIds = dbStudents.map(s => s.guardian.familyId);
 
-  const eduScores = await prisma.eduScore.findMany({
-    where: { familyId: { in: familyIds } },
-  });
-
-  const riskScores = await prisma.riskScore.findMany({
-    where: { familyId: { in: familyIds } },
-  });
+  const [eduScores, riskScores] = await Promise.all([
+    prisma.eduScore.findMany({
+      where: { familyId: { in: familyIds } },
+    }),
+    prisma.riskScore.findMany({
+      where: { familyId: { in: familyIds } },
+    })
+  ]);
 
   return dbStudents.map(s => {
     const eduScore = eduScores.find(e => e.familyId === s.guardian.familyId) || null;
@@ -1154,19 +1155,21 @@ export async function getSchoolCashFlowForecast(schoolId: string, termId: string
       .map(i => ({ amountDue: i.amountDue, status: i.status, studentId: i.studentId }));
   } else {
     // Prisma Implementation
-    const dbStudents = await prisma.student.findMany({
-      where: { currentSchoolId: schoolId },
-      include: { guardian: true },
-    });
+    const [dbStudents, dbInvoices] = await Promise.all([
+      prisma.student.findMany({
+        where: { currentSchoolId: schoolId },
+        include: { guardian: true },
+      }),
+      prisma.feeInvoice.findMany({
+        where: {
+          student: { currentSchoolId: schoolId },
+          termId: termId,
+        },
+      })
+    ]);
+
     dbStudents.forEach(s => {
       studentMap[s.id] = { familyId: s.guardian.familyId };
-    });
-
-    const dbInvoices = await prisma.feeInvoice.findMany({
-      where: {
-        student: { currentSchoolId: schoolId },
-        termId: termId,
-      },
     });
 
     invoices = dbInvoices.map(i => ({
@@ -1179,6 +1182,21 @@ export async function getSchoolCashFlowForecast(schoolId: string, termId: string
   let totalBilling = 0;
   let expectedCollection = 0;
   let expectedShortfall = 0;
+
+  // Batch query risk scores in production to prevent N+1 query loops
+  const latestRiskMap: Record<string, number> = {};
+  if (!isMockMode()) {
+    const familyIds = Object.values(studentMap).map(m => m.familyId).filter(Boolean);
+    const dbRiskScores = await prisma.riskScore.findMany({
+      where: { familyId: { in: familyIds } },
+      orderBy: { computedAt: 'desc' },
+    });
+    for (const r of dbRiskScores) {
+      if (latestRiskMap[r.familyId] === undefined) {
+        latestRiskMap[r.familyId] = r.score;
+      }
+    }
+  }
 
   for (const inv of invoices) {
     totalBilling += inv.amountDue;
@@ -1197,11 +1215,7 @@ export async function getSchoolCashFlowForecast(schoolId: string, termId: string
         const risk = mockDb.riskScores.find(r => r.studentId === inv.studentId);
         if (risk) riskScore = risk.score;
       } else {
-        const risk = await prisma.riskScore.findFirst({
-          where: { familyId },
-          orderBy: { computedAt: 'desc' },
-        });
-        if (risk) riskScore = risk.score;
+        riskScore = latestRiskMap[familyId] || 0;
       }
     }
 

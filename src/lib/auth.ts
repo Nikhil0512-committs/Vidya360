@@ -111,9 +111,13 @@ export async function signOut(): Promise<{ success: boolean }> {
   cStore.delete('vidya360-session');
 
   if (!isMockMode()) {
-    const supabase = await createSupabaseServerClient();
-    if (supabase) {
-      await supabase.auth.signOut();
+    try {
+      const supabase = await createSupabaseServerClient();
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
+    } catch (e) {
+      console.warn('Supabase auth signout warning:', e);
     }
   }
 
