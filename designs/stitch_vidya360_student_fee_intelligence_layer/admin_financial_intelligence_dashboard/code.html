@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vidya360 Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#25005a",
+                        "outline": "#75777d",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c5c6cd",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "surface-tint": "#545f73",
+                        "surface-container-high": "#e6e8ea",
+                        "primary-container": "#1e293b",
+                        "surface-bright": "#f7f9fb",
+                        "inverse-primary": "#bcc7de",
+                        "surface-container": "#eceef0",
+                        "on-primary-container": "#8590a6",
+                        "tertiary-container": "#35007b",
+                        "surface-container-highest": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "on-background": "#191c1e",
+                        "on-secondary-container": "#006f66",
+                        "tertiary-fixed": "#eaddff",
+                        "secondary": "#006a61",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#45474c",
+                        "on-tertiary-container": "#a375ff",
+                        "secondary-fixed": "#89f5e7",
+                        "tertiary": "#1c0048",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5a00c6",
+                        "surface-container-low": "#f2f4f6",
+                        "background": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#d2bbff",
+                        "surface-dim": "#d8dadc",
+                        "primary-fixed": "#d8e3fb",
+                        "secondary-fixed-dim": "#6bd8cb",
+                        "surface-variant": "#e0e3e5",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#111c2d",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-fixed": "#00201d",
+                        "primary": "#091426",
+                        "on-secondary-fixed-variant": "#005049",
+                        "secondary-container": "#86f2e4",
+                        "on-surface": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "40px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Inter"],
+                        "mono-data": ["Inter"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "title-lg": ["18px", { "lineHeight": "1.5", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "mono-data": ["14px", { "lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; }
+        .insight-card { border-left: 4px solid #7C3AED; }
+        .kanban-column { min-height: 400px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary dark:bg-primary border-r border-outline-variant dark:border-outline flex flex-col p-spacing-gutter z-20">
+<div class="mb-8 flex flex-col items-center">
+<img class="w-16 h-16 rounded-full mb-4 object-cover" data-alt="A clean, modern institutional logo consisting of abstract geometric shapes in white and teal, set against a dark primary background. The design evokes trust, education, and financial stability. High-resolution, crisp edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD_vn-RmjMYB-Boao1XsaVU0pVNWhhMr1UhIvXVHbTPQIWDm3uwk0ONk0M5D-EHCkDIykFpG-RLk-hHman-55zfhGOUSj7NCFVsRBIAIMSQoruV9VVbJcZ-xxShonL9G5S9u5idkiNSFns_FCFrkywabva7jsBk53dCFuv3OfGvOHwGsZgqtbLba5J0MToroiZTh7VBZx3VT2N80T8H1mPjRgPs8esN0tnI30NVvtz_Tl7MzmbpY5o"/>
+<h1 class="text-headline-md font-headline-lg font-bold text-on-primary">Vidya360</h1>
+<p class="font-label-md text-label-md text-on-primary/70">Institutional Finance</p>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary-container dark:text-secondary-fixed bg-on-primary-fixed-variant/10 rounded-lg hover:bg-on-primary-fixed-variant/5 hover:text-on-primary transition-colors scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 dark:text-on-primary/60 hover:bg-on-primary-fixed-variant/5 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="font-label-md text-label-md">Fee Pipeline</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 dark:text-on-primary/60 hover:bg-on-primary-fixed-variant/5 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-md text-label-md">Student Records</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 dark:text-on-primary/60 hover:bg-on-primary-fixed-variant/5 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">assignment_ind</span>
+<span class="font-label-md text-label-md">Admissions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 dark:text-on-primary/60 hover:bg-on-primary-fixed-variant/5 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Financial Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 dark:text-on-primary/60 hover:bg-on-primary-fixed-variant/5 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Institutional Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full bg-[#0D9488] text-white py-3 rounded-lg font-label-md text-label-md font-semibold mb-6 hover:bg-opacity-90 transition-opacity">Generate Report</button>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Sign Out</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 ml-[280px] flex flex-col h-full overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flex justify-between items-center w-full h-16 px-spacing-margin-desktop z-10 sticky top-0">
+<div class="flex items-center">
+<!-- Search Bar Placeholder -->
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent w-64" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<img class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a middle-aged male school administrator wearing a smart-casual suit. The lighting is soft and natural, suggesting a modern, forward-thinking educational environment. High quality, well-lit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxNrWcmDISY1K5LcxGTRsdXftM3HrcnP6oCmedSS7Pzgioqv6kOQYe40wUkY1gkFVTDTdcIcG5VgbmCw9JSMf56RRt0mhM_VNQ6ye6WNQ4SA9kMYLY_kBbJiQfEQcC1iQ9ZVosWunC2DM4f9dFIkmpFIb85ZGRdH5y1Lgd6STYpHiv0zdNsSojGjUkGa3pq07sUqGBTxdJzaxgMON-skwjtzCtAxX7PJFj17bmNZkfA7f3uqZzBBk_"/>
+</div>
+</header>
+<!-- Dashboard Content -->
+<main class="flex-1 overflow-y-auto p-spacing-margin-desktop pb-24">
+<div class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Dashboard Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time insights into institutional financial health.</p>
+</div>
+<!-- Summary Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-spacing-gutter mb-spacing-gutter">
+<div class="glass-panel rounded-xl p-6 flex flex-col gap-2 relative overflow-hidden group hover:border-[#CBD5E1] transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Collectible</span>
+<span class="font-display-lg text-display-lg text-primary">$4.2M</span>
+<div class="flex items-center gap-1 text-[#0D9488] font-mono-data text-mono-data mt-2">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12% vs last term</span>
+</div>
+<!-- Minimalist sparkline placeholder -->
+<div class="absolute bottom-0 left-0 w-full h-12 opacity-20 pointer-events-none" style="background: linear-gradient(to top, rgba(13, 148, 136, 0.2), transparent);"></div>
+</div>
+<div class="glass-panel insight-card rounded-xl p-6 flex flex-col gap-2 group hover:border-[#CBD5E1] transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Expected Shortfall</span>
+<span class="material-symbols-outlined text-tertiary-container text-sm">auto_awesome</span>
+</div>
+<span class="font-display-lg text-display-lg text-primary">$185K</span>
+<div class="flex items-center gap-1 text-[#ba1a1a] font-mono-data text-mono-data mt-2">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span>AI Predicted Risk</span>
+</div>
+</div>
+<div class="glass-panel rounded-xl p-6 flex flex-col gap-2 group hover:border-[#CBD5E1] transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">School Runway</span>
+<span class="font-display-lg text-display-lg text-primary">14 Mo</span>
+<div class="w-full bg-surface-container-high h-2 rounded-full mt-4 overflow-hidden">
+<div class="bg-[#0D9488] h-full rounded-full w-[70%]"></div>
+</div>
+</div>
+</div>
+<!-- Main Split Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-spacing-gutter">
+<!-- Left/Center: Kanban Board & Charts -->
+<div class="lg:col-span-2 flex flex-col gap-spacing-gutter">
+<!-- Cash Flow Forecast Chart Area -->
+<div class="glass-panel rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-title-lg text-title-lg text-primary">Cash Flow Forecast</h3>
+<button class="font-label-md text-label-md text-secondary hover:underline">View Detailed Report</button>
+</div>
+<div class="h-64 bg-surface-container-low rounded-lg border border-outline-variant flex items-center justify-center relative overflow-hidden">
+<!-- Placeholder for actual chart -->
+<div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDEwaDQwTTAgMjBoNDBNMCAzMGg0ME0xMCAwdjQwTTIwIDB2NDBNMzAgMHY0MCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAuNSIvPjwvc3ZnPg==')]"></div>
+<span class="font-body-md text-body-md text-on-surface-variant">Line chart visualization (Historical vs Predicted)</span>
+</div>
+</div>
+<!-- Risk-Scored Fee Pipeline (Kanban) -->
+<div class="glass-panel rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-title-lg text-title-lg text-primary">Risk-Scored Fee Pipeline</h3>
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Low Risk -->
+<div class="flex flex-col gap-3 kanban-column bg-surface-container-low p-4 rounded-lg">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-label-md text-label-md text-primary font-semibold uppercase">Low Risk</h4>
+<span class="bg-surface-container-highest px-2 py-1 rounded text-xs">24</span>
+</div>
+<div class="bg-white p-3 rounded-lg border border-outline-variant shadow-sm hover:border-[#CBD5E1] transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="font-title-lg text-title-lg text-primary text-sm">Smith Family</span>
+<span class="bg-[#e0f2f1] text-[#00695c] font-mono-data text-[10px] px-2 py-0.5 rounded-full font-bold">12</span>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface-variant block mb-2">$4,500 due</span>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-[#00695c] h-full rounded-full w-[10%]"></div>
+</div>
+</div>
+<div class="bg-white p-3 rounded-lg border border-outline-variant shadow-sm hover:border-[#CBD5E1] transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="font-title-lg text-title-lg text-primary text-sm">Johnson Family</span>
+<span class="bg-[#e0f2f1] text-[#00695c] font-mono-data text-[10px] px-2 py-0.5 rounded-full font-bold">18</span>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface-variant block mb-2">$3,200 due</span>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-[#00695c] h-full rounded-full w-[15%]"></div>
+</div>
+</div>
+</div>
+<!-- Medium Risk -->
+<div class="flex flex-col gap-3 kanban-column bg-surface-container-low p-4 rounded-lg">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-label-md text-label-md text-primary font-semibold uppercase">Medium Risk</h4>
+<span class="bg-surface-container-highest px-2 py-1 rounded text-xs">12</span>
+</div>
+<div class="bg-white p-3 rounded-lg border border-outline-variant shadow-sm hover:border-[#CBD5E1] transition-colors cursor-pointer border-l-2 border-l-[#f57f17]">
+<div class="flex justify-between items-start mb-2">
+<span class="font-title-lg text-title-lg text-primary text-sm">Davis Family</span>
+<span class="bg-[#fff8e1] text-[#f57f17] font-mono-data text-[10px] px-2 py-0.5 rounded-full font-bold">45</span>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface-variant block mb-2">$8,100 due</span>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-[#f57f17] h-full rounded-full w-[45%]"></div>
+</div>
+</div>
+</div>
+<!-- High Risk -->
+<div class="flex flex-col gap-3 kanban-column bg-surface-container-low p-4 rounded-lg">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-label-md text-label-md text-primary font-semibold uppercase">High Risk</h4>
+<span class="bg-surface-container-highest px-2 py-1 rounded text-xs">5</span>
+</div>
+<div class="bg-white p-3 rounded-lg border border-outline-variant shadow-sm hover:border-[#CBD5E1] transition-colors cursor-pointer border-l-2 border-l-error">
+<div class="flex justify-between items-start mb-2">
+<span class="font-title-lg text-title-lg text-primary text-sm">Miller Family</span>
+<span class="bg-[#ffebee] text-[#c62828] font-mono-data text-[10px] px-2 py-0.5 rounded-full font-bold">88</span>
+</div>
+<span class="font-mono-data text-mono-data text-on-surface-variant block mb-2">$12,400 due</span>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full w-[88%]"></div>
+</div>
+<div class="mt-3 flex gap-2">
+<button class="text-[10px] bg-surface-container-low px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high">Send Reminder</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Student Insights Sidebar -->
+<div class="lg:col-span-1 flex flex-col gap-spacing-gutter">
+<div class="glass-panel insight-card rounded-xl p-6 h-full flex flex-col">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-tertiary-container">psychology</span>
+<h3 class="font-title-lg text-title-lg text-primary">Student Insights</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 text-sm">Top achievements and trends correlating with fee compliance.</p>
+<div class="flex-1 flex flex-col gap-4">
+<!-- Insight Item -->
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-[#0D9488]/10 flex items-center justify-center text-[#0D9488]">
+<span class="material-symbols-outlined text-sm">school</span>
+</div>
+<span class="font-title-lg text-title-lg text-primary text-sm">STEM Excellence</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-xs">Students in advanced STEM tracks show a 15% higher rate of early fee payments.</p>
+</div>
+<!-- Insight Item -->
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-[#f57f17]/10 flex items-center justify-center text-[#f57f17]">
+<span class="material-symbols-outlined text-sm">event_busy</span>
+</div>
+<span class="font-title-lg text-title-lg text-primary text-sm">Attendance Flags</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-xs">Noticeable correlation between recent attendance drops and delayed payments in Grade 10.</p>
+</div>
+</div>
+<button class="mt-6 w-full py-2 border border-[#7C3AED] text-[#7C3AED] rounded-lg font-label-md text-label-md hover:bg-[#7C3AED]/5 transition-colors">View All AI Insights</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

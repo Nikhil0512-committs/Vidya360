@@ -1,0 +1,131 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model UserProfile {
+  id         String    @id // Maps to Supabase auth.users.id
+  email      String    @unique
+  name       String
+  role       String    // "ADMIN" | "PARENT"
+  guardianId String?   @unique
+  guardian   Guardian? @relation(fields: [guardianId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+}
+
+model School {
+  id                  String              @id @default(uuid())
+  name                String
+  students            Student[]
+  feePassportsIssued  FeePassportRecord[] @relation("IssuedPassports")
+  feePassportsVerify  FeePassportRecord[] @relation("VerifiedPassports")
+}
+
+model Student {
+  id                 String              @id @default(uuid())
+  name               String
+  guardianId         String
+  guardian           Guardian            @relation(fields: [guardianId], references: [id], onDelete: Cascade)
+  currentSchoolId    String
+  currentSchool      School              @relation(fields: [currentSchoolId], references: [id])
+  enrollmentHistory  Json                // JSON array storing history: [{ schoolId: String, startTerm: String, endTerm: String }]
+  invoices           FeeInvoice[]
+  academicRecords    AcademicRecord[]
+  achievements       Achievement[]
+  feePassportRecords FeePassportRecord[]
+}
+
+model Guardian {
+  id        String       @id @default(uuid())
+  name      String
+  contact   String
+  familyId  String       // Groups siblings for combined risk scoring and EduScore
+  students  Student[]
+  user      UserProfile?
+}
+
+model FeeInvoice {
+  id          String       @id @default(uuid())
+  studentId   String
+  student     Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  termId      String       // E.g., "TERM_1_2026"
+  amountDue   Float
+  dueDate     DateTime
+  status      String       // "PAID" | "PARTIAL" | "OVERDUE" | "PLAN_ACTIVE"
+  payments    Payment[]
+  paymentPlan PaymentPlan?
+}
+
+model Payment {
+  id        String     @id @default(uuid())
+  invoiceId String
+  invoice   FeeInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount    Float
+  paidDate  DateTime
+  method    String     // "UPI" | "CARD" | "CASH" | "NET_BANKING"
+}
+
+model RiskScore {
+  id          String   @id @default(uuid())
+  familyId    String
+  termId      String
+  score       Float    // 0 to 100
+  explanation String
+  computedAt  DateTime @default(now())
+}
+
+model EduScore {
+  id          String   @id @default(uuid())
+  familyId    String   @unique
+  score       Int      // CIBIL-like credit score (300 to 900)
+  band        String   // "EXCELLENT" | "GOOD" | "FAIR" | "BUILDING_HISTORY"
+  history     Json     // list of historical score points: [{ score: Int, date: Date }]
+  lastUpdated DateTime @updatedAt
+}
+
+model FeePassportRecord {
+  id                String   @id @default(uuid())
+  studentId         String
+  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  issuingSchoolId   String
+  issuingSchool     School   @relation("IssuedPassports", fields: [issuingSchoolId], references: [id])
+  verifyingSchoolId String?
+  verifyingSchool   School?  @relation("VerifiedPassports", fields: [verifyingSchoolId], references: [id])
+  payload           String   // Cryptographically signed JWT/JSON payload containing records
+  issuedAt          DateTime @default(now())
+}
+
+model PaymentPlan {
+  id           String     @id @default(uuid())
+  invoiceId    String     @unique
+  invoice      FeeInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  installments Json       // array of installments: [{ dueDate: Date, amount: Float, status: "PAID"|"PENDING" }]
+  riskBand     String     // "LOW" | "MEDIUM" | "HIGH"
+}
+
+model AcademicRecord {
+  id                String  @id @default(uuid())
+  studentId         String
+  student           Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  termId            String
+  subject           String
+  marks             Float
+  maxMarks          Float
+  attendancePercent Float
+}
+
+model Achievement {
+  id             String   @id @default(uuid())
+  studentId      String
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title          String
+  category       String   // "SPORTS" | "ACADEMICS" | "ARTS" | "OTHER"
+  level          String   // "SCHOOL" | "DISTRICT" | "STATE" | "NATIONAL"
+  date           DateTime
+  certificateUrl String?
+}
