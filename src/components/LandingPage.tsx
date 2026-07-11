@@ -6,9 +6,10 @@ interface LandingPageProps {
   onEnterPortal: () => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  isLoggedIn?: boolean;
 }
 
-export default function LandingPage({ onEnterPortal, isDarkMode, toggleDarkMode }: LandingPageProps) {
+export default function LandingPage({ onEnterPortal, isDarkMode, toggleDarkMode, isLoggedIn }: LandingPageProps) {
   const [activeTab, setActiveTab] = useState<'passport' | 'score' | 'escrow'>('passport');
 
   return (
@@ -126,7 +127,7 @@ export default function LandingPage({ onEnterPortal, isDarkMode, toggleDarkMode 
               onClick={onEnterPortal}
               className={`px-4 py-2 rounded-full text-xs font-bold tracking-wide transition duration-300 active:scale-95 ${isDarkMode ? 'border border-white/[0.08] hover:border-white/30 hover:bg-white hover:text-black' : 'border border-slate-250 hover:bg-slate-900 hover:text-white'}`}
             >
-              Sign In
+              {isLoggedIn ? 'Go to Dashboard' : 'Sign In'}
             </button>
           </div>
         </div>
@@ -155,7 +156,7 @@ export default function LandingPage({ onEnterPortal, isDarkMode, toggleDarkMode 
               onClick={onEnterPortal}
               className={`px-6 py-3 rounded-full text-xs font-bold transition duration-300 transform active:scale-95 ${isDarkMode ? 'bg-white text-black hover:bg-neutral-200 shadow-[0_4px_25px_rgba(255,255,255,0.15)]' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_4px_25px_rgba(0,0,0,0.1)]'}`}
             >
-              Access Portal
+              {isLoggedIn ? 'Access Dashboard' : 'Access Portal'}
             </button>
             <a 
               href="#features"

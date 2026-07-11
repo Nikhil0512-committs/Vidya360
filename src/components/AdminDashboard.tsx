@@ -23,9 +23,10 @@ interface AdminDashboardProps {
   onLogout: () => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  onGoToLanding?: () => void;
 }
 
-export default function AdminDashboard({ user, onLogout, isDarkMode, toggleDarkMode }: AdminDashboardProps) {
+export default function AdminDashboard({ user, onLogout, isDarkMode, toggleDarkMode, onGoToLanding }: AdminDashboardProps) {
   const [schools, setSchools] = useState<any[]>([]);
   const [activeSchoolId, setActiveSchoolId] = useState<string>('');
   const [students, setStudents] = useState<any[]>([]);
@@ -392,7 +393,16 @@ export default function AdminDashboard({ user, onLogout, isDarkMode, toggleDarkM
     <div className={`min-h-screen ${isDarkMode ? 'bg-[#091122] text-slate-100' : 'bg-[#F8FAFC] text-slate-800'} flex overflow-hidden font-body-lg antialiased w-full transition-colors duration-500`}>
       {/* SideNavBar (Shared component matching parent style) */}
       <aside className="hidden md:flex bg-[#091426] text-white fixed left-0 top-0 h-full w-[280px] border-r border-slate-800 flex-col p-6 z-20">
-        <a href="/" className="mb-10 flex items-center gap-4 cursor-pointer hover:opacity-80 transition select-none">
+        <a 
+          href="/" 
+          onClick={(e) => {
+            if (onGoToLanding) {
+              e.preventDefault();
+              onGoToLanding();
+            }
+          }}
+          className="mb-10 flex items-center gap-4 cursor-pointer hover:opacity-80 transition select-none"
+        >
           <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center overflow-hidden">
             <span className="material-symbols-outlined text-teal-400 text-2xl font-bold">school</span>
           </div>

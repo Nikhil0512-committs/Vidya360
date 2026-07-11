@@ -300,16 +300,17 @@ export default function Home() {
     );
   }
 
+  if (showLanding) {
+    return <LandingPage onEnterPortal={() => setShowLanding(false)} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} isLoggedIn={!!session} />;
+  }
+
   if (!session) {
-    if (showLanding) {
-      return <LandingPage onEnterPortal={() => setShowLanding(false)} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />;
-    }
     return <Login onLoginSuccess={handleLoginSuccess} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />;
   }
 
   if (session.role === 'ADMIN') {
-    return <AdminDashboard user={session} onLogout={handleLogout} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />;
+    return <AdminDashboard user={session} onLogout={handleLogout} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} onGoToLanding={() => setShowLanding(true)} />;
   }
 
-  return <ParentDashboard user={session} onLogout={handleLogout} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />;
+  return <ParentDashboard user={session} onLogout={handleLogout} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} onGoToLanding={() => setShowLanding(true)} />;
 }
