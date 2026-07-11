@@ -36,9 +36,6 @@ import { revalidatePath } from 'next/cache';
 export async function handleSignIn(email: string) {
   try {
     const res = await signIn(email);
-    if (res.success) {
-      revalidatePath('/');
-    }
     return res;
   } catch (err: any) {
     return { success: false, error: err.message || 'Authentication failed', user: undefined };
@@ -47,7 +44,6 @@ export async function handleSignIn(email: string) {
 
 export async function handleSignOut() {
   const res = await signOut();
-  revalidatePath('/');
   return res;
 }
 
