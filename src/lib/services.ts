@@ -243,7 +243,7 @@ export async function getSchools() {
   if (isMockMode()) {
     return mockDb.schools;
   }
-  return await prisma.school.findMany({ order: { name: 'asc' } } as any);
+  return await prisma.school.findMany({ orderBy: { name: 'asc' } });
 }
 
 export async function getUserProfile(userId: string) {
