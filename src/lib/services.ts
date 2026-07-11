@@ -547,14 +547,16 @@ export async function recomputeStudentScores(studentId: string) {
   const existingEdu = await prisma.eduScore.findUnique({ where: { familyId } });
 
   if (existingEdu) {
-    const historyList = existingEdu.history as Array<{ score: number; date: string }>;
+    const historyList = Array.isArray(existingEdu.history)
+      ? (existingEdu.history as any[]).map(h => ({ ...h }))
+      : [];
     historyList.push({ score: eduResult.score, date: new Date().toISOString().split('T')[0] });
     await prisma.eduScore.update({
       where: { familyId },
       data: {
         score: eduResult.score,
         band: eduResult.band,
-        history: historyList,
+        history: historyList as any,
       },
     });
   } else {
@@ -655,7 +657,9 @@ export async function payInvoice(invoiceId: string, amount: number, method: stri
     // Update payment plan installments if applicable
     const plan = await prisma.paymentPlan.findUnique({ where: { invoiceId } });
     if (plan) {
-      const installments = plan.installments as Array<{ dueDate: string; amount: number; status: 'PAID' | 'PENDING' }>;
+      const installments = Array.isArray(plan.installments)
+        ? (plan.installments as any[]).map(inst => ({ ...inst }))
+        : [];
       const unpaid = installments.find(inst => inst.status === 'PENDING');
       if (unpaid) {
         unpaid.status = 'PAID';
@@ -671,7 +675,7 @@ export async function payInvoice(invoiceId: string, amount: number, method: stri
 
       await prisma.paymentPlan.update({
         where: { invoiceId },
-        data: { installments },
+        data: { installments: installments as any },
       });
     }
 

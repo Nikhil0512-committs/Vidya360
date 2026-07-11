@@ -34,6 +34,7 @@ export default function ParentDashboard({ user, onLogout, isDarkMode, toggleDark
   const [payInvoiceId, setPayInvoiceId] = useState<string | null>(null);
   const [payAmount, setPayAmount] = useState<number>(0);
   const [payMethod, setPayMethod] = useState<string>('UPI');
+  const [isPaying, setIsPaying] = useState(false);
   
   // Transfer request state
   const [schools, setSchools] = useState<any[]>([]);
@@ -179,6 +180,7 @@ export default function ParentDashboard({ user, onLogout, isDarkMode, toggleDark
     e.preventDefault();
     if (!payInvoiceId || payAmount <= 0) return;
 
+    setIsPaying(true);
     try {
       const res = await handlePayInvoice(payInvoiceId, payAmount, payMethod);
       if (res.success) {
@@ -189,6 +191,8 @@ export default function ParentDashboard({ user, onLogout, isDarkMode, toggleDark
       }
     } catch (err) {
       alert('An error occurred');
+    } finally {
+      setIsPaying(false);
     }
   };
 
@@ -1315,16 +1319,25 @@ export default function ParentDashboard({ user, onLogout, isDarkMode, toggleDark
             <div className="flex gap-3 pt-2">
               <button
                 type="button"
+                disabled={isPaying}
                 onClick={() => setPayInvoiceId(null)}
-                className="flex-1 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                className="flex-1 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="flex-1 py-2 text-xs font-bold rounded-lg bg-[#091426] text-white hover:bg-slate-800 transition active:scale-95"
+                disabled={isPaying}
+                className="flex-1 py-2 text-xs font-bold rounded-lg bg-[#091426] text-white hover:bg-slate-800 transition active:scale-95 disabled:opacity-70 flex items-center justify-center gap-1.5"
               >
-                Pay Now
+                {isPaying ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <span>Pay Now</span>
+                )}
               </button>
             </div>
           </form>
