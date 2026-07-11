@@ -392,7 +392,7 @@ export default function AdminDashboard({ user, onLogout, isDarkMode, toggleDarkM
     <div className={`min-h-screen ${isDarkMode ? 'bg-[#091122] text-slate-100' : 'bg-[#F8FAFC] text-slate-800'} flex overflow-hidden font-body-lg antialiased w-full transition-colors duration-500`}>
       {/* SideNavBar (Shared component matching parent style) */}
       <aside className="hidden md:flex bg-[#091426] text-white fixed left-0 top-0 h-full w-[280px] border-r border-slate-800 flex-col p-6 z-20">
-        <div className="mb-10 flex items-center gap-4">
+        <a href="/" className="mb-10 flex items-center gap-4 cursor-pointer hover:opacity-80 transition select-none">
           <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center overflow-hidden">
             <span className="material-symbols-outlined text-teal-400 text-2xl font-bold">school</span>
           </div>
@@ -400,7 +400,7 @@ export default function AdminDashboard({ user, onLogout, isDarkMode, toggleDarkM
             <h1 className="text-xl font-bold text-white tracking-tight">Vidya360</h1>
             <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Institutional Portal</p>
           </div>
-        </div>
+        </a>
 
         <nav className="flex-grow flex flex-col gap-2">
           <button 

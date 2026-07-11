@@ -77,12 +77,12 @@ export default function Login({ onLoginSuccess, isDarkMode, toggleDarkMode }: Lo
 
       <div className={`max-w-md w-full space-y-8 p-8 rounded-2xl relative z-10 transition-colors duration-500 ${isDarkMode ? 'bg-slate-900/60 backdrop-blur-md border border-slate-800 shadow-2xl text-white' : 'bg-white border border-slate-200 shadow-xl text-slate-800'}`}>
         <div className="text-center">
-          <div className="flex justify-center items-center gap-2.5">
+          <a href="/" className="flex justify-center items-center gap-2.5 hover:opacity-85 transition">
             <span className={`material-symbols-outlined text-3xl font-extrabold ${isDarkMode ? 'text-teal-400 drop-shadow-[0_0_8px_rgba(45,212,191,0.4)]' : 'text-teal-650'}`}>school</span>
             <span className={`text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]' : 'text-[#091426]'}`}>
               Vidya360
             </span>
-          </div>
+          </a>
           <h2 className={`mt-5 text-xl font-bold ${isDarkMode ? 'text-slate-100' : 'text-[#091426]'}`}>
             Fee Intelligence & Credit Layer
           </h2>

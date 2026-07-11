@@ -1309,7 +1309,9 @@ export async function submitTransferRequest(studentId: string, targetSchoolId: s
 
 export async function getTransferRequestsBySchool(schoolId: string) {
   const reqs = mockDb.transferRequests.filter(r => r.targetSchoolId === schoolId);
-  return reqs.map(r => {
+  const results = [];
+  
+  for (const r of reqs) {
     let verifiedPayload = null;
     try {
       verifiedPayload = verifyFeePassportToken(r.passportToken);
@@ -1317,19 +1319,27 @@ export async function getTransferRequestsBySchool(schoolId: string) {
       console.error('Failed to verify token inside request', e);
     }
 
-    const student = mockDb.students.find(s => s.id === r.studentId);
+    let studentName = 'Unknown Student';
+    if (isMockMode()) {
+      const student = mockDb.students.find(s => s.id === r.studentId);
+      studentName = student?.name || 'Unknown Student';
+    } else {
+      const student = await prisma.student.findUnique({ where: { id: r.studentId } });
+      studentName = student?.name || 'Unknown Student';
+    }
 
-    return {
+    results.push({
       id: r.id,
       studentId: r.studentId,
-      studentName: student?.name || 'Unknown Student',
+      studentName,
       targetSchoolId: r.targetSchoolId,
       status: r.status,
       requestedAt: r.requestedAt,
       passportToken: r.passportToken,
       verifiedPayload,
-    };
-  });
+    });
+  }
+  return results;
 }
 
 export async function processTransferRequest(requestId: string, status: 'APPROVED' | 'REJECTED') {
