@@ -46,15 +46,25 @@ export function calculateRiskScoreLogic(
 
   paidInvoices.forEach(inv => {
     const due = new Date(inv.dueDate);
+    let invoiceWasLate = false;
+    let maxInvoiceDpd = 0;
+
     inv.payments.forEach(pay => {
       const paid = new Date(pay.paidDate);
       const diffTime = paid.getTime() - due.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       if (diffDays > 0) {
-        totalDpd += diffDays;
-        latePaymentsCount++;
+        invoiceWasLate = true;
+        if (diffDays > maxInvoiceDpd) {
+          maxInvoiceDpd = diffDays;
+        }
       }
     });
+
+    if (invoiceWasLate) {
+      totalDpd += maxInvoiceDpd;
+      latePaymentsCount++;
+    }
   });
 
   if (latePaymentsCount > 0) {
@@ -111,13 +121,19 @@ export function calculateEduScoreLogic(
   let latePayments = 0;
   paidInvoices.forEach(inv => {
     const due = new Date(inv.dueDate);
+    let invoiceWasLate = false;
+
     inv.payments.forEach(pay => {
       const paid = new Date(pay.paidDate);
       const isFunded = pay.method === 'SCHOLARSHIP' || pay.method === 'ESCROW';
       if (paid > due && !isFunded) {
-        latePayments++;
+        invoiceWasLate = true;
       }
     });
+
+    if (invoiceWasLate) {
+      latePayments++;
+    }
   });
 
   const paidCount = paidInvoices.length;
@@ -376,7 +392,15 @@ export async function getStudentDetails(studentId: string) {
   });
 
   return {
-    ...student,
+    id: student.id,
+    name: student.name,
+    guardianId: student.guardianId,
+    currentSchoolId: student.currentSchoolId,
+    enrollmentHistory: student.enrollmentHistory,
+    guardian: student.guardian,
+    invoices: student.invoices,
+    academicRecords: student.academicRecords,
+    achievements: student.achievements,
     eduScore,
     riskScore,
   };
@@ -438,7 +462,7 @@ export async function getGuardianByUserId(userId: string) {
 /**
  * Triggers re-calculation of Defaulter Risk and EduScore for a family
  */
-export async function recomputeStudentScores(studentId: string) {
+export async function recomputeStudentScores(studentId: string, passedFamilyId?: string) {
   let invoicesList: { dueDate: Date | string; status: string; amountDue: number; payments: { paidDate: Date | string; method?: string }[] }[] = [];
   let siblingCount = 0;
 
@@ -503,12 +527,15 @@ export async function recomputeStudentScores(studentId: string) {
   }
 
   // Prisma database implementation
-  const targetStudent = await prisma.student.findUnique({
-    where: { id: studentId },
-    include: { guardian: true }
-  });
-  if (!targetStudent) throw new Error('Student not found');
-  const familyId = targetStudent.guardian.familyId;
+  let familyId = passedFamilyId;
+  if (!familyId) {
+    const targetStudent = await prisma.student.findUnique({
+      where: { id: studentId },
+      include: { guardian: true }
+    });
+    if (!targetStudent) throw new Error('Student not found');
+    familyId = targetStudent.guardian.familyId;
+  }
 
   const students = await prisma.student.findMany({
     where: { guardian: { familyId } },
@@ -578,10 +605,12 @@ export async function recomputeStudentScores(studentId: string) {
  */
 export async function payInvoice(invoiceId: string, amount: number, method: string) {
   let guardianFamilyId = '';
+  let studentId = '';
 
   if (isMockMode()) {
     const invoice = mockDb.invoices.find(i => i.id === invoiceId);
     if (!invoice) throw new Error('Invoice not found');
+    studentId = invoice.studentId;
 
     const paymentId = 'pay-' + Math.random().toString(36).substr(2, 9);
     mockDb.payments.push({
@@ -633,6 +662,7 @@ export async function payInvoice(invoiceId: string, amount: number, method: stri
       },
     });
     if (!invoice) throw new Error('Invoice not found');
+    studentId = invoice.studentId;
 
     await prisma.payment.create({
       data: {
@@ -683,18 +713,11 @@ export async function payInvoice(invoiceId: string, amount: number, method: stri
   }
 
   // Recalculate scores
-  if (isMockMode()) {
-    const invoice = mockDb.invoices.find(i => i.id === invoiceId);
-    if (invoice?.studentId) {
-      await recomputeStudentScores(invoice.studentId);
-    }
-  } else {
-    const invoice = await prisma.feeInvoice.findUnique({
-      where: { id: invoiceId },
-      include: { student: true }
-    });
-    if (invoice?.studentId) {
-      await recomputeStudentScores(invoice.studentId);
+  if (studentId) {
+    if (isMockMode()) {
+      await recomputeStudentScores(studentId);
+    } else {
+      await recomputeStudentScores(studentId, guardianFamilyId);
     }
   }
 }
